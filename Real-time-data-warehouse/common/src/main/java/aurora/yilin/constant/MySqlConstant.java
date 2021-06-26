@@ -1,4 +1,4 @@
-package aurora.yilin.Constant;
+package aurora.yilin.constant;
 
 /**
  * @Description
@@ -15,9 +15,8 @@ public enum MySqlConstant {
     //mysql.username=root
     MYSQL_USERNAME("mysql.username"),
     //mysql.password=Natural;follow
-    MYSQL_PASSWORD("mysql.password"),
-    //mysql.databseList=gmall2021
-    MYSQL_DATABASE_LIST("mysql.databse.list");
+    MYSQL_PASSWORD("mysql.password");
+
 
 
     private String value;

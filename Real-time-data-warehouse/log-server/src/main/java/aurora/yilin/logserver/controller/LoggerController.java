@@ -1,7 +1,7 @@
 package aurora.yilin.logserver.controller;
 
-import aurora.yilin.Constant.KafkaConstant;
-import aurora.yilin.utils.PropertiesAnalysisUtil;
+import aurora.yilin.logserver.constant.CommonConstant;
+import aurora.yilin.logserver.utils.GetResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Properties;
 
 /**
  * @Description
@@ -25,13 +24,14 @@ public class LoggerController {
     private static final Logger log = LoggerFactory.getLogger(LoggerController.class);
 
     @Resource
-    KafkaTemplate<String,String> kafkaTemplate;
+    KafkaTemplate<String, String> kafkaTemplate;
 
     @RequestMapping("/applog")
-    public String getLogger(@RequestParam("param")String jsonLogger){
-        kafkaTemplate.send(PropertiesAnalysisUtil.getInfoBykeyFromPro(KafkaConstant.OSD_LOG_TOPIC.getValue()),jsonLogger);
-
-
+    public String getLogger(@RequestParam("param") String jsonLogger) {
+        kafkaTemplate.send(
+                GetResource
+                        .getApplicationPro()
+                        .getProperty(CommonConstant.OSD_LOG_TOPIC.getValue()), jsonLogger);
         log.info(jsonLogger);
         return "success";
     }

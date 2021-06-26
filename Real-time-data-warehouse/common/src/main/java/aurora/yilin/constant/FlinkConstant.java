@@ -1,4 +1,4 @@
-package aurora.yilin.Constant;
+package aurora.yilin.constant;
 
 /**
  * @Description

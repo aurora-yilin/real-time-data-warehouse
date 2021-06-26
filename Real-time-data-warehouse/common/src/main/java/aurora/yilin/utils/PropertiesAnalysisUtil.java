@@ -33,4 +33,15 @@ public class PropertiesAnalysisUtil {
     public static String getInfoBykeyFromPro(String key){
         return properties.getProperty(key);
     }
+
+    public static Properties getProperties(String fileName){
+        Properties properties = null;
+        try {
+            properties = new Properties();
+            properties.load(PropertiesAnalysisUtil.class.getClassLoader().getResourceAsStream(fileName));
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+        return properties;
+    }
 }

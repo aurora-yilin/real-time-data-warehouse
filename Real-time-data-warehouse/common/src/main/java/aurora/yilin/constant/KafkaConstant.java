@@ -1,4 +1,4 @@
-package aurora.yilin.Constant;
+package aurora.yilin.constant;
 
 /**
  * @Description
@@ -10,13 +10,7 @@ package aurora.yilin.Constant;
 public enum KafkaConstant {
 
     //bootstrap.servers
-    BOOTSTRAP_SERVERS("bootstrap.servers"),
-
-    //ods.db.topic=ods_base_db
-    ODS_DB_TOPIC("ods.db.topic"),
-
-    //ods.log.topic=ods_base_log
-    OSD_LOG_TOPIC("ods.log.topic");
+    BOOTSTRAP_SERVERS("bootstrap.servers");
 
 
     private String value;

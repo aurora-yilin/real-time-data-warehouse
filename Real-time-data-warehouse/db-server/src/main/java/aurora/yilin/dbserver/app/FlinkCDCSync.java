@@ -1,8 +1,8 @@
 package aurora.yilin.dbserver.app;
 
-import aurora.yilin.Constant.FlinkConstant;
-import aurora.yilin.Constant.KafkaConstant;
-import aurora.yilin.Constant.MySqlConstant;
+import aurora.yilin.constant.MySqlConstant;
+import aurora.yilin.dbserver.constant.CommonConstant;
+import aurora.yilin.dbserver.utils.GetResource;
 import aurora.yilin.utils.KafkaUtil;
 import aurora.yilin.utils.PropertiesAnalysisUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -10,16 +10,14 @@ import com.alibaba.ververica.cdc.connectors.mysql.MySQLSource;
 import com.alibaba.ververica.cdc.connectors.mysql.table.StartupOptions;
 import com.alibaba.ververica.cdc.debezium.DebeziumSourceFunction;
 import io.debezium.data.Envelope;
+import org.apache.flink.api.common.typeinfo.BasicTypeInfo;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-
-import java.util.Properties;
 
 /**
  * @Description
@@ -31,23 +29,24 @@ import java.util.Properties;
 public class FlinkCDCSync {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.enableCheckpointing(Long.parseLong(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_CHECKPOINTING.getValue())));
+        /*env.enableCheckpointing(Long.parseLong(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_CHECKPOINTING.getValue())));
         env.getCheckpointConfig().setCheckpointTimeout(Long.parseLong(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_CHECKPOINT_TIMEOUT.getValue())));
-        env.setStateBackend(new FsStateBackend(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_STATE_BACKEND_FLINK_CDC.getValue())));
+        env.setStateBackend(new FsStateBackend(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_STATE_BACKEND_FLINK_CDC.getValue())));*/
 
         env.setParallelism(1);
 
-        DebeziumSourceFunction<String> mysqlSouce = MySQLSource.<String>builder()
+        DebeziumSourceFunction<String> mysqlSource = MySQLSource.<String>builder()
                 .hostname(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_HOSTNAME.getValue()))
                 .port(Integer.parseInt(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PORT.getValue())))
                 .username(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_USERNAME.getValue()))
                 .password(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PASSWORD.getValue()))
-                .databaseList(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_DATABASE_LIST.getValue()))
+                .databaseList(PropertiesAnalysisUtil.getInfoBykeyFromPro(CommonConstant.MYSQL_DATABASE_LIST.getValue()))
                 .startupOptions(StartupOptions.latest())
                 .deserializer(new DebeziumDeserializationSchema())
                 .build();
-        env.addSource(mysqlSouce)
-                .addSink(KafkaUtil.getKafkaSink(PropertiesAnalysisUtil.getInfoBykeyFromPro(KafkaConstant.ODS_DB_TOPIC.getValue())));
+        env.addSource(mysqlSource).print();
+        env.addSource(mysqlSource)
+                .addSink(KafkaUtil.getKafkaSink(GetResource.getApplicationPro().getProperty(CommonConstant.ODS_DB_TOPIC.getValue())));
 
         env.execute();
 
@@ -67,7 +66,7 @@ public class FlinkCDCSync {
             Envelope.Operation operation = Envelope.operationFor(sourceRecord);
 
             //获取值信息并转换为Struct类型
-            Struct value = (Struct) sourceRecord.value();
+            Struct value = (Struct)sourceRecord.value();
 
             //获取变化后的数据
             Struct after = value.getStruct("after");
@@ -95,7 +94,7 @@ public class FlinkCDCSync {
 
         @Override
         public TypeInformation<String> getProducedType() {
-            return null;
+            return BasicTypeInfo.STRING_TYPE_INFO;
         }
     }
 }
