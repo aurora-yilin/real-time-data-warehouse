@@ -97,18 +97,22 @@ public class DbOperationApp {
                 .port(Integer.parseInt(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PORT.getValue())))
                 .username(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_USERNAME.getValue()))
                 .password(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PASSWORD.getValue()))
-                .databaseList(PropertiesAnalysisUtil.getInfoBykeyFromPro(CommonConstant.MYSQL_DATABASE_LIST.getValue()))
-                .startupOptions(StartupOptions.latest())
+                .databaseList(applicationPro.getProperty(CommonConstant.MYSQL_DATABASE_LIST.getValue()))
+                .startupOptions(StartupOptions.initial())
                 .deserializer(new DebeziumDeserializationSchema())
                 .build();
+        System.out.println("<<<<<<<<<<<<<<<<<<"+applicationPro.getProperty(CommonConstant.MYSQL_DATABASE_LIST.getValue())+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
+        //创建广播流的数据类型
+        MapStateDescriptor CONFIGUR = new MapStateDescriptor("config", String.class, String.class);
 
-        MapStateDescriptor CONFIGUR = new MapStateDescriptor("config", StringSerializer.INSTANCE, StringSerializer.INSTANCE);
+        //创建广播流
         BroadcastStream<String> broadcastStream = env.addSource(mysqlSource).setParallelism(1).broadcast(CONFIGUR);
 
-        OutputTag<JSONObject> hbaseOutputTag = new OutputTag<JSONObject>(applicationPro.getProperty(CommonConstant.SINK_TYPE_HBASE.getValue()));
+        //创建hbase测输出流
+        OutputTag<JSONObject> hbaseOutputTag = new OutputTag<JSONObject>(applicationPro.getProperty(CommonConstant.SINK_TYPE_HBASE.getValue())){};
 
-        //将主流与广播流合并
+        //合并广播流和主流
         BroadcastConnectedStream<JSONObject, String> broadcastConnectedStream = filterDataIsNull.connect(broadcastStream);
 
         SingleOutputStreamOperator<JSONObject> process = broadcastConnectedStream.process(new TableProcessFunction(hbaseOutputTag, CONFIGUR));
@@ -146,8 +150,9 @@ public class DbOperationApp {
         //value:{"database":"","tableName":"","type":"","data":{"source_table":"base_trademark",...},"before":{"id":"1001",...}}
         @Override
         public void processBroadcastElement(String value, Context ctx, Collector<JSONObject> out) throws Exception {
+            log.info(value+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
-            //将广播流中的json对象解析为TableProcess对象
+            //将广播流中的string字符串解析为TableProcess对象
             JSONObject jsonObject = JSONObject.parseObject(value);
             TableProcess tableProcess = JSON.parseObject(jsonObject.getString("data"), TableProcess.class);
 
@@ -172,7 +177,7 @@ public class DbOperationApp {
             PreparedStatement preparedStatement = null;
 
             try {
-                //处理主键和扩展字段,给定默认值
+                //校验主键和建表扩展字段，并尝试初始化
                 if (sinkPk == null) {
                     sinkPk = "id";
                 }
@@ -180,7 +185,7 @@ public class DbOperationApp {
                     sinkExtend = "";
                 }
 
-                //1.拼接SQL
+                //根据提供的建表信息尝试拼接建表语句
                 StringBuilder createSql = new StringBuilder("create table if not exists ");
                 createSql.append(GetResource.getApplicationPro().getProperty(CommonConstant.HBASE_SCHEMA.getValue()))
                         .append(".")
@@ -207,16 +212,16 @@ public class DbOperationApp {
                 //拼接扩展字段
                 createSql.append(")").append(sinkExtend);
 
-                //打印建表语句
-                System.out.println(createSql.toString());
+                log.info(createSql.toString());
 
-                //2.编译SQL
+                //预编译sql语句
                 preparedStatement = connection.prepareStatement(createSql.toString());
 
-                //3.执行,建表
+                //执行建表语句
                 preparedStatement.execute();
 
             } catch (SQLException e) {
+                log.error("Phoenix创建" + sinkTable + "表失败！");
                 throw new RuntimeException("Phoenix创建" + sinkTable + "表失败！");
             } finally {
 
@@ -240,6 +245,7 @@ public class DbOperationApp {
             String key = value.getString("tableName") + "_" + value.getString("type");
             TableProcess tableProcess = broadcastState.get(key);
 
+            log.info(tableProcess.toString()+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             //该数据对应的广播信息不为null
             if (tableProcess != null) {
 

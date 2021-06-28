@@ -11,6 +11,8 @@ import com.alibaba.ververica.cdc.connectors.mysql.table.StartupOptions;
 import com.alibaba.ververica.cdc.debezium.DebeziumSourceFunction;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import java.util.Properties;
+
 /**
  * @Description
  * @Author yilin
@@ -22,6 +24,7 @@ public class FlinkCDCSync {
     public static void main(String[] args) throws Exception {
         /*System.setProperty("HADOOP_USER_NAME", "xxx");*/
 
+        Properties applicationPro = GetResource.getApplicationPro();
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         /*env.enableCheckpointing(Long.parseLong(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_CHECKPOINTING.getValue())));
         env.getCheckpointConfig().setCheckpointTimeout(Long.parseLong(PropertiesAnalysisUtil.getInfoBykeyFromPro(FlinkConstant.FLINK_CHECKPOINT_TIMEOUT.getValue())));
@@ -34,13 +37,11 @@ public class FlinkCDCSync {
                 .port(Integer.parseInt(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PORT.getValue())))
                 .username(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_USERNAME.getValue()))
                 .password(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PASSWORD.getValue()))
-                .databaseList(PropertiesAnalysisUtil.getInfoBykeyFromPro(CommonConstant.MYSQL_DATABASE_LIST.getValue()))
+                .databaseList(applicationPro.getProperty(CommonConstant.MYSQL_DATABASE_LIST.getValue()))
                 .startupOptions(StartupOptions.latest())
                 .deserializer(new DebeziumDeserializationSchema())
                 .build();
 
-        //测试代码
-        /*env.addSource(mysqlSource).print();*/
         env.addSource(mysqlSource)
                 .addSink(KafkaUtil.getKafkaSink(GetResource.getApplicationPro().getProperty(CommonConstant.ODS_DB_TOPIC.getValue())));
 

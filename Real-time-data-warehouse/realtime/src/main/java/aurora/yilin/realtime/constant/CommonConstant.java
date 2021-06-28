@@ -38,7 +38,12 @@ public enum CommonConstant {
     //phoenix驱动
     PHOENIX_DRIVER("phoenix.driver"),
     //phoenix连接参数
-    PHOENIX_SERVER("phoenix.server");
+    PHOENIX_SERVER("phoenix.server"),
+
+    //dwm_unique_visit
+    DWM_UNIQUE_VISIT_TOPIC("dwm.unique.visit.topic"),
+    //unique.visit.app.consumer.groupId
+    UNIQUE_VISIT_APP_CONSUMER_GROUPID("unique.visit.app.consumer.groupId");
 
     private String value;
 
