@@ -11,7 +11,7 @@ public enum CommonConstant {
     //ods.db.topic=ods_base_db
     ODS_DB_TOPIC("ods.db.topic"),
     //mysql.databseList=gmall2021
-    MYSQL_DATABASE_LIST("mysql.databse.list");
+    MYSQL_DATABASE_LIST("mysql.database.list");
 
     private String value;
 

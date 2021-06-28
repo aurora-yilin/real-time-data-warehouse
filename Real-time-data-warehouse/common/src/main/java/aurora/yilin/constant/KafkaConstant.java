@@ -10,7 +10,9 @@ package aurora.yilin.constant;
 public enum KafkaConstant {
 
     //bootstrap.servers
-    BOOTSTRAP_SERVERS("bootstrap.servers");
+    BOOTSTRAP_SERVERS("bootstrap.servers"),
+    //kafka.default.topic
+    KAFKA_DEFAULT_TOPIC("kafka.default.topic");
 
 
     private String value;
