@@ -40,10 +40,17 @@ public enum CommonConstant {
     //phoenix连接参数
     PHOENIX_SERVER("phoenix.server"),
 
+
     //dwm_unique_visit
     DWM_UNIQUE_VISIT_TOPIC("dwm.unique.visit.topic"),
     //unique.visit.app.consumer.groupId
-    UNIQUE_VISIT_APP_CONSUMER_GROUPID("unique.visit.app.consumer.groupId");
+    UNIQUE_VISIT_APP_CONSUMER_GROUPID("unique.visit.app.consumer.groupId"),
+
+
+    //dwm.bounce.rate.topic=dwm_user_jump_detail
+    DWM_BOUNCE_RATE_TOPIC("dwm.bounce.rate.topic"),
+    //dwm.bounce.rate.consumer.groupId=bounce_rate_app_consumer
+    DWM_BOUNCE_RATE_CONSUMER_GROUPID("dwm.bounce.rate.consumer.groupId");
 
     private String value;
 

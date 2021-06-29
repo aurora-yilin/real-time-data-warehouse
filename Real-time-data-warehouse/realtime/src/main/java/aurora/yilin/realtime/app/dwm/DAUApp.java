@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 /**
- * @Description
+ * @Description 用户日活指标
  * @Author yilin
  * @Version V1.0.0
  * @Since 1.0
