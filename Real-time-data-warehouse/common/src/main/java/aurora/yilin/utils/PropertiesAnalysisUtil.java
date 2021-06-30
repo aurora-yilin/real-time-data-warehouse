@@ -24,7 +24,6 @@ public class PropertiesAnalysisUtil {
         try {
             properties = new Properties();
             properties.load(PropertiesAnalysisUtil.class.getClassLoader().getResourceAsStream("realTime.properties"));
-
         } catch (IOException e) {
             log.error(e.getMessage());
         }

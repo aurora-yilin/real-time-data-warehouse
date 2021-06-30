@@ -3,18 +3,17 @@ package aurora.yilin.realtime.app.dwm;
 import aurora.yilin.realtime.constant.CommonConstant;
 import aurora.yilin.realtime.utils.GetResource;
 import aurora.yilin.utils.KafkaUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONAware;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import org.apache.flink.api.common.eventtime.*;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.PatternTimeoutFunction;
-import org.apache.flink.cep.functions.PatternProcessFunction;
 import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.cep.pattern.conditions.IterativeCondition;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -124,7 +123,8 @@ public class BounceRateApp {
         });
 
         DataStream<JSONObject> sideOutput = result.getSideOutput(timeOutOutputTag);
-        result.union(sideOutput).map(JSONAware::toJSONString).addSink(KafkaUtil.getKafkaSink(sinkTopicId));
+        result.union(sideOutput).map(JSONAware::toJSONString)
+                .addSink(KafkaUtil.getKafkaSink(sinkTopicId));
 
         env.execute();
 

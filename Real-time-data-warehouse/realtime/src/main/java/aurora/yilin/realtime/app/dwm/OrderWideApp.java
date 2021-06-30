@@ -8,4 +8,7 @@ package aurora.yilin.realtime.app.dwm;
  * @Date 2021/6/29
  */
 public class OrderWideApp {
+    public static void main(String[] args) {
+
+    }
 }

@@ -91,7 +91,7 @@ public class DbOperationApp {
                     }
                 });
 
-        //通过FlinkCDC来实时获取mysql中对应库的修改信息
+        //通过FlinkCDC来实时获取mysql中对应的配置信息
         DebeziumSourceFunction<String> mysqlSource = MySQLSource.<String>builder()
                 .hostname(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_HOSTNAME.getValue()))
                 .port(Integer.parseInt(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PORT.getValue())))
@@ -112,9 +112,10 @@ public class DbOperationApp {
         //创建hbase测输出流
         OutputTag<JSONObject> hbaseOutputTag = new OutputTag<JSONObject>(applicationPro.getProperty(CommonConstant.SINK_TYPE_HBASE.getValue())){};
 
-        //合并广播流和主流
+        //通过connect将主流和广播流进行连接使其可以共享状态
         BroadcastConnectedStream<JSONObject, String> broadcastConnectedStream = filterDataIsNull.connect(broadcastStream);
 
+        //对connect后的流进行合并
         SingleOutputStreamOperator<JSONObject> process = broadcastConnectedStream.process(new TableProcessFunction(hbaseOutputTag, CONFIGUR));
 
         process.getSideOutput(hbaseOutputTag).addSink(new HbaseDimSink());
@@ -130,6 +131,9 @@ public class DbOperationApp {
 
     }
 
+    /**
+     * 将主流与配置广播流进行合并并根据配置流信息实现动态写入
+     */
     public static class TableProcessFunction extends BroadcastProcessFunction<JSONObject, String, JSONObject> {
 
         private OutputTag<JSONObject> outputTag;
@@ -143,6 +147,7 @@ public class DbOperationApp {
 
         @Override
         public void open(Configuration parameters) throws Exception {
+            //初始化Phoenix链接
             Class.forName(GetResource.getApplicationPro().getProperty(CommonConstant.PHOENIX_DRIVER.getValue()));
             connection = DriverManager.getConnection(GetResource.getApplicationPro().getProperty(CommonConstant.PHOENIX_SERVER.getValue()));
         }
@@ -152,7 +157,7 @@ public class DbOperationApp {
         public void processBroadcastElement(String value, Context ctx, Collector<JSONObject> out) throws Exception {
             log.info(value+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
-            //将广播流中的string字符串解析为TableProcess对象
+            //提取广播流中的数据信息将其转化为TableProcess对象
             JSONObject jsonObject = JSONObject.parseObject(value);
             TableProcess tableProcess = JSON.parseObject(jsonObject.getString("data"), TableProcess.class);
 
@@ -171,7 +176,15 @@ public class DbOperationApp {
         }
 
 
-        //在Phoenix中建表  create table if not exists yy.xx(aa varchar primary key,bb varchar)
+        //检测phoenix中是否存在表若不存在则创建  create table if not exists yy.xx(aa varchar primary key,bb varchar)
+
+        /**
+         * 尝试根据配置文件信息创建表
+         * @param sinkTable
+         * @param sinkColumns
+         * @param sinkPk
+         * @param sinkExtend
+         */
         private void checkTable(String sinkTable, String sinkColumns, String sinkPk, String sinkExtend) {
 
             PreparedStatement preparedStatement = null;
@@ -271,6 +284,12 @@ public class DbOperationApp {
         }
 
         //根据配置信息过滤字段 data：{"id":"1","tm_name":"atguigu","logo":"xxx"}
+
+        /**
+         * 根据配置广播流中的字段信息对主流中数据进行字段过滤
+         * @param data
+         * @param sinkColumns
+         */
         private void filterColumn(JSONObject data, String sinkColumns) {
 
             //拆分需要保留的字段信息并转化为list结构便于后续操作

@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import java.util.Properties;
 
 /**
- * @Description
+ * @Description 通过FlinkCDC将mysql的binlog中的数据进行监听并发往kafka
  * @Author yilin
  * @Version V1.0.0
  * @Since 1.0

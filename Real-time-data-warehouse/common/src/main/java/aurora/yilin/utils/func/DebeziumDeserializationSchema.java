@@ -13,7 +13,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 import java.util.List;
 
 /**
- * @Description
+ * @Description FlinkCDC序列化器的实现
  * @Author yilin
  * @Version V1.0.0
  * @Since 1.0
