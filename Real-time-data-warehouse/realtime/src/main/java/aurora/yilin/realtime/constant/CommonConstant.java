@@ -50,7 +50,22 @@ public enum CommonConstant {
     //dwm.bounce.rate.topic=dwm_user_jump_detail
     DWM_BOUNCE_RATE_TOPIC("dwm.bounce.rate.topic"),
     //dwm.bounce.rate.consumer.groupId=bounce_rate_app_consumer
-    DWM_BOUNCE_RATE_CONSUMER_GROUPID("dwm.bounce.rate.consumer.groupId");
+    DWM_BOUNCE_RATE_CONSUMER_GROUPID("dwm.bounce.rate.consumer.groupId"),
+
+
+//    order.info.topic=dwd_order_info
+    ORDER_INFO_TOPIC("order.info.topic"),
+//    order.detail.topic=dwd_order_detail
+    ORDER_DETAIL_TOPIC("order.detail.topic"),
+//    order.wide.topic=dwm_order_wide
+    ORDER_WIDE_TOPIC("order.wide.topic"),
+//    dwm.order.wide.app.consumer.groupId=order_wide_group
+    DWM_ORDER_WIDE_APP_CONSUMER_GROUPID("dwm.order.wide.app.consumer.groupId"),
+
+
+    //dimension
+    //user.info.dimension
+    USER_INFO_DIMENSION("user.info.dimension");
 
     private String value;
 
