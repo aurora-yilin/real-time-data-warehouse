@@ -10,7 +10,7 @@ import java.util.Map;
  * @Since 1.0
  * @Date 2021/7/1
  */
-public class LinkedHashLRUCacheUtil extends LinkedHashMap {
+public class LinkedHashLRUCacheUtil<K,V> extends LinkedHashMap<K,V> {
 
     private Long Limit;
 
@@ -30,7 +30,7 @@ public class LinkedHashLRUCacheUtil extends LinkedHashMap {
     public enum LRUCacheSingle{
         LRU_CACHE(100L);
 
-        private LinkedHashLRUCacheUtil linkedHashLRUCache;
+        private LinkedHashLRUCacheUtil<String,String> linkedHashLRUCache;
 
         LRUCacheSingle(Long limit){
             this.linkedHashLRUCache = new LinkedHashLRUCacheUtil(limit);

@@ -1,10 +1,23 @@
 package aurora.yilin.realtime.bean;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 
-public class OrderWide {
+/**
+ * @Description
+ * @Author yilin
+ * @Version V1.0.0
+ * @Since 1.0
+ * @Date 2021/7/2
+ */
+public class PaymentWide {
+    Long payment_id;
+    String subject;
+    String payment_type;
+    String payment_create_time;
+    String callback_time;
     Long detail_id;
     Long order_id;
     Long sku_id;
@@ -14,7 +27,6 @@ public class OrderWide {
     Long province_id;
     String order_status;
     Long user_id;
-
     BigDecimal total_amount;
     BigDecimal activity_reduce_amount;
     BigDecimal coupon_reduce_amount;
@@ -24,32 +36,34 @@ public class OrderWide {
     BigDecimal split_activity_amount;
     BigDecimal split_coupon_amount;
     BigDecimal split_total_amount;
+    String order_create_time;
 
-    String expire_time;
-    String create_time; //yyyy-MM-dd HH:mm:ss
-    String operate_time;
-    String create_date; // 把其他字段处理得到
-    String create_hour;
-
-    String province_name;//查询维表得到
+    String province_name;   //查询维表得到
     String province_area_code;
     String province_iso_code;
     String province_3166_2_code;
 
-    Integer user_age;
+    Integer user_age;       //用户信息
     String user_gender;
 
-    Long spu_id;     //作为维度数据 要关联进来
+    Long spu_id;           //作为维度数据 要关联进来
     Long tm_id;
     Long category3_id;
     String spu_name;
     String tm_name;
     String category3_name;
 
-    public OrderWide() {
+    public PaymentWide(PaymentInfo paymentInfo, OrderWide orderWide) {
+        mergeOrderWide(orderWide);
+        mergePaymentInfo(paymentInfo);
     }
 
-    public OrderWide(Long detail_id, Long order_id, Long sku_id, BigDecimal order_price, Long sku_num, String sku_name, Long province_id, String order_status, Long user_id, BigDecimal total_amount, BigDecimal activity_reduce_amount, BigDecimal coupon_reduce_amount, BigDecimal original_total_amount, BigDecimal feight_fee, BigDecimal split_feight_fee, BigDecimal split_activity_amount, BigDecimal split_coupon_amount, BigDecimal split_total_amount, String expire_time, String create_time, String operate_time, String create_date, String create_hour, String province_name, String province_area_code, String province_iso_code, String province_3166_2_code, Integer user_age, String user_gender, Long spu_id, Long tm_id, Long category3_id, String spu_name, String tm_name, String category3_name) {
+    public PaymentWide(Long payment_id, String subject, String payment_type, String payment_create_time, String callback_time, Long detail_id, Long order_id, Long sku_id, BigDecimal order_price, Long sku_num, String sku_name, Long province_id, String order_status, Long user_id, BigDecimal total_amount, BigDecimal activity_reduce_amount, BigDecimal coupon_reduce_amount, BigDecimal original_total_amount, BigDecimal feight_fee, BigDecimal split_feight_fee, BigDecimal split_activity_amount, BigDecimal split_coupon_amount, BigDecimal split_total_amount, String order_create_time, String province_name, String province_area_code, String province_iso_code, String province_3166_2_code, Integer user_age, String user_gender, Long spu_id, Long tm_id, Long category3_id, String spu_name, String tm_name, String category3_name) {
+        this.payment_id = payment_id;
+        this.subject = subject;
+        this.payment_type = payment_type;
+        this.payment_create_time = payment_create_time;
+        this.callback_time = callback_time;
         this.detail_id = detail_id;
         this.order_id = order_id;
         this.sku_id = sku_id;
@@ -68,11 +82,7 @@ public class OrderWide {
         this.split_activity_amount = split_activity_amount;
         this.split_coupon_amount = split_coupon_amount;
         this.split_total_amount = split_total_amount;
-        this.expire_time = expire_time;
-        this.create_time = create_time;
-        this.operate_time = operate_time;
-        this.create_date = create_date;
-        this.create_hour = create_hour;
+        this.order_create_time = order_create_time;
         this.province_name = province_name;
         this.province_area_code = province_area_code;
         this.province_iso_code = province_iso_code;
@@ -87,39 +97,74 @@ public class OrderWide {
         this.category3_name = category3_name;
     }
 
-    public OrderWide(OrderInfo orderInfo, OrderDetail orderDetail) {
-        mergeOrderInfo(orderInfo);
-        mergeOrderDetail(orderDetail);
+    public PaymentWide() {
     }
 
-    public void mergeOrderInfo(OrderInfo orderInfo) {
-        if (orderInfo != null) {
-            this.order_id = orderInfo.id;
-            this.order_status = orderInfo.order_status;
-            this.create_time = orderInfo.create_time;
-            this.create_date = orderInfo.create_date;
-            this.create_hour = orderInfo.create_hour;
-            this.activity_reduce_amount = orderInfo.activity_reduce_amount;
-            this.coupon_reduce_amount = orderInfo.coupon_reduce_amount;
-            this.original_total_amount = orderInfo.original_total_amount;
-            this.feight_fee = orderInfo.feight_fee;
-            this.total_amount = orderInfo.total_amount;
-            this.province_id = orderInfo.province_id;
-            this.user_id = orderInfo.user_id;
+    public void mergePaymentInfo(PaymentInfo paymentInfo) {
+        if (paymentInfo != null) {
+            try {
+                BeanUtils.copyProperties(this, paymentInfo);
+                payment_create_time = paymentInfo.create_time;
+                payment_id = paymentInfo.id;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void mergeOrderDetail(OrderDetail orderDetail) {
-        if (orderDetail != null) {
-            this.detail_id = orderDetail.id;
-            this.sku_id = orderDetail.sku_id;
-            this.sku_name = orderDetail.sku_name;
-            this.order_price = orderDetail.order_price;
-            this.sku_num = orderDetail.sku_num;
-            this.split_activity_amount = orderDetail.split_activity_amount;
-            this.split_coupon_amount = orderDetail.split_coupon_amount;
-            this.split_total_amount = orderDetail.split_total_amount;
+    public void mergeOrderWide(OrderWide orderWide) {
+        if (orderWide != null) {
+            try {
+                BeanUtils.copyProperties(this, orderWide);
+                order_create_time = orderWide.create_time;
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public Long getPayment_id() {
+        return payment_id;
+    }
+
+    public void setPayment_id(Long payment_id) {
+        this.payment_id = payment_id;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getPayment_type() {
+        return payment_type;
+    }
+
+    public void setPayment_type(String payment_type) {
+        this.payment_type = payment_type;
+    }
+
+    public String getPayment_create_time() {
+        return payment_create_time;
+    }
+
+    public void setPayment_create_time(String payment_create_time) {
+        this.payment_create_time = payment_create_time;
+    }
+
+    public String getCallback_time() {
+        return callback_time;
+    }
+
+    public void setCallback_time(String callback_time) {
+        this.callback_time = callback_time;
     }
 
     public Long getDetail_id() {
@@ -266,44 +311,12 @@ public class OrderWide {
         this.split_total_amount = split_total_amount;
     }
 
-    public String getExpire_time() {
-        return expire_time;
+    public String getOrder_create_time() {
+        return order_create_time;
     }
 
-    public void setExpire_time(String expire_time) {
-        this.expire_time = expire_time;
-    }
-
-    public String getCreate_time() {
-        return create_time;
-    }
-
-    public void setCreate_time(String create_time) {
-        this.create_time = create_time;
-    }
-
-    public String getOperate_time() {
-        return operate_time;
-    }
-
-    public void setOperate_time(String operate_time) {
-        this.operate_time = operate_time;
-    }
-
-    public String getCreate_date() {
-        return create_date;
-    }
-
-    public void setCreate_date(String create_date) {
-        this.create_date = create_date;
-    }
-
-    public String getCreate_hour() {
-        return create_hour;
-    }
-
-    public void setCreate_hour(String create_hour) {
-        this.create_hour = create_hour;
+    public void setOrder_create_time(String order_create_time) {
+        this.order_create_time = order_create_time;
     }
 
     public String getProvince_name() {
