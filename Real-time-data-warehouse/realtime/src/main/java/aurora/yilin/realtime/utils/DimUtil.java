@@ -49,15 +49,14 @@ public class DimUtil {
     }
 
     public static void delRedisDimInfo(String tableName, String id) {
-
         //拼接RedisKey
         String Key = "DIM:" + tableName + ":" + id;
-
         //删除数据
         linkedHashLRUCache.remove(Key);
         redisStandaloneASync.del(Key);
 
     }
+
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         System.out.println(redisStandaloneASync.exists("111").get()==1);

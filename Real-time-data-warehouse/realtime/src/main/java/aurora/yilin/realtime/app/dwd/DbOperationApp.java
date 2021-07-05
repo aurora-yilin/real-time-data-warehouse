@@ -4,6 +4,7 @@ import aurora.yilin.constant.MySqlConstant;
 import aurora.yilin.realtime.app.dwd.func.TableProcessFunction;
 import aurora.yilin.realtime.bean.TableProcess;
 import aurora.yilin.realtime.constant.CommonConstant;
+import aurora.yilin.realtime.utils.DimUtil;
 import aurora.yilin.realtime.utils.GetResource;
 import aurora.yilin.utils.KafkaUtil;
 import aurora.yilin.utils.PropertiesAnalysisUtil;
@@ -165,6 +166,9 @@ public class DbOperationApp {
                 JSONObject data = value.getJSONObject("data");
                 String upsertSql = genUpsertSql(tableName, data);
                 System.out.println(upsertSql);
+                if ("update".equals(value.getString("type"))) {
+                    DimUtil.delRedisDimInfo(tableName,value.getJSONObject("data").getString("id"));
+                }
 
                 //2.编译SQL
                 preparedStatement = connection.prepareStatement(upsertSql.toString());
