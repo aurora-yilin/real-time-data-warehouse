@@ -38,7 +38,7 @@ public class FlinkCDCSync {
                 .username(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_USERNAME.getValue()))
                 .password(PropertiesAnalysisUtil.getInfoBykeyFromPro(MySqlConstant.MYSQL_PASSWORD.getValue()))
                 .databaseList(applicationPro.getProperty(CommonConstant.MYSQL_DATABASE_LIST.getValue()))
-                .startupOptions(StartupOptions.latest())
+                .startupOptions(StartupOptions.initial())
                 .deserializer(new DebeziumDeserializationSchema())
                 .build();
 

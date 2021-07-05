@@ -36,16 +36,6 @@ public class TimeParseUtil {
      * @return
      * @throws ParseException
      */
-    public static long parseTimeFromYearToSeconds(String dateStr){
-        try {
-            return simpleDateFormat.parse(dateStr).getTime();
-        }catch (ParseException pex){
-            log.error(pex.getMessage());
-        }
-        return System.currentTimeMillis();
-
-    }
-
     public static long parseTimeThreadSafety(String dateStr){
         LocalDateTime localDateTime = LocalDateTime.parse(dateStr, dateTimeFormatter);
         return localDateTime.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
@@ -56,10 +46,6 @@ public class TimeParseUtil {
      * @param dateStr
      * @return
      */
-    public static String FormatTimeFromYearToSeconds(String dateStr){
-        return simpleDateFormat.format(dateStr);
-    }
-
     public static String FormatTimeThreadSafety(String dateStr){
         LocalDateTime localDateTime = null;
         if (dateStr.length() == 13) {

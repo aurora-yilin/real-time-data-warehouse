@@ -29,13 +29,8 @@ public class PaymentWideApp {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
 
-        //设置CK & 状态后端
-        //env.enableCheckpointing(5000L);
-        //env.getCheckpointConfig().setCheckpointTimeout(5000L);
-        //env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/flink-210108/cdc/ck"));
-
         //TODO 2.读取Kafka主题数据并转换为JavaBean对象
-        String groupId = "payment_wide_group_210108";
+        String groupId = "payment_wide_group";
         String paymentInfoSourceTopic = "dwd_payment_info";
         String orderWideSourceTopic = "dwm_order_wide";
         String paymentWideSinkTopic = "dwm_payment_wide";

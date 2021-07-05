@@ -96,14 +96,14 @@ public class BounceRateApp {
                     @Override
                     public boolean filter(JSONObject value, Context<JSONObject> ctx) throws Exception {
                         String lastPageId = value.getJSONObject("page").getString("last_page_id");
-                        return Objects.isNull(lastPageId) && lastPageId.length() <= 0;
+                        return (Objects.isNull(lastPageId) || lastPageId.length() <= 0);
                     }
                 }).next("next")
                 .where(new IterativeCondition<JSONObject>() {
                     @Override
                     public boolean filter(JSONObject value, Context<JSONObject> ctx) throws Exception {
                         String lastPageId = value.getJSONObject("page").getString("last_page_id");
-                        return Objects.isNull(lastPageId) && lastPageId.length() <= 0;
+                        return (Objects.isNull(lastPageId) || lastPageId.length() <= 0);
                     }
                 }).within(Time.seconds(10));
 

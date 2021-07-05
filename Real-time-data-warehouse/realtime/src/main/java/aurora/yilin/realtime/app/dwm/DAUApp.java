@@ -3,6 +3,7 @@ package aurora.yilin.realtime.app.dwm;
 import aurora.yilin.realtime.constant.CommonConstant;
 import aurora.yilin.realtime.utils.GetResource;
 import aurora.yilin.utils.KafkaUtil;
+import aurora.yilin.utils.TimeParseUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -85,14 +86,14 @@ public class DAUApp {
                     public boolean filter(JSONObject value) throws Exception {
                         String lastPageId = value.getJSONObject("page").getString("last_page_id");
                         if (lastPageId == null || lastPageId.length()<=0) {
-                            lastLoginDate.update(simpleDateFormat.format(value.getString("ts")));
+                            lastLoginDate.update(TimeParseUtil.FormatTimeThreadSafety(value.getString("ts")));
                             return true;
                         }else {
                             if (Objects.isNull(lastLoginDate.value())){
-                                lastLoginDate.update(simpleDateFormat.format(value.getString("ts")));
+                                lastLoginDate.update(TimeParseUtil.FormatTimeThreadSafety(value.getString("ts")));
                                 return true;
                             }else{
-                                if (lastLoginDate.value().equals(simpleDateFormat.format(value.getString("ts")))) {
+                                if (lastLoginDate.value().equals(TimeParseUtil.FormatTimeThreadSafety(value.getString("ts")))) {
                                     return false;
                                 }else{
                                     return true;

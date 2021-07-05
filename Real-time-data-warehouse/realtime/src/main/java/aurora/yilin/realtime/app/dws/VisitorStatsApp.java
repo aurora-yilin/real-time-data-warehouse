@@ -20,6 +20,8 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
+import java.time.Duration;
+
 /**
  * @Description
  * @Author yilin
@@ -35,16 +37,12 @@ public class VisitorStatsApp {
         //如果读取的是Kafka中数据,则需要与Kafka的分区数保持一致
         env.setParallelism(1);
 
-        //设置CK & 状态后端
-//        env.enableCheckpointing(5000L);
-//        env.getCheckpointConfig().setCheckpointTimeout(5000L);
-//        env.setStateBackend(new FsStateBackend("hdfs://hadoop102:8020/flink-210108/cdc/ck"));
 
         //TODO 2.读取Kafka主题创建流并转换为JSON对象
         String pageViewSourceTopic = "dwd_page_log";
         String uniqueVisitSourceTopic = "dwm_unique_visit";
         String userJumpDetailSourceTopic = "dwm_user_jump_detail";
-        String groupId = "visitor_stats_app_210108";
+        String groupId = "visitor_stats_app";
         SingleOutputStreamOperator<JSONObject> uvKafkaDS = env.addSource(KafkaUtil.getKafkaSource(uniqueVisitSourceTopic, groupId))
                 .map(JSONObject::parseObject);
         SingleOutputStreamOperator<JSONObject> ujKafkaDS = env.addSource(KafkaUtil.getKafkaSource(userJumpDetailSourceTopic, groupId))

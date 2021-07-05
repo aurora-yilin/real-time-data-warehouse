@@ -146,4 +146,22 @@ public class VisitorStats {
     public void setTs(Long ts) {
         this.ts = ts;
     }
+
+    @Override
+    public String toString() {
+        return "VisitorStats{" +
+                "stt='" + stt + '\'' +
+                ", edt='" + edt + '\'' +
+                ", vc='" + vc + '\'' +
+                ", ch='" + ch + '\'' +
+                ", ar='" + ar + '\'' +
+                ", is_new='" + is_new + '\'' +
+                ", uv_ct=" + uv_ct +
+                ", pv_ct=" + pv_ct +
+                ", sv_ct=" + sv_ct +
+                ", uj_ct=" + uj_ct +
+                ", dur_sum=" + dur_sum +
+                ", ts=" + ts +
+                '}';
+    }
 }
