@@ -28,7 +28,7 @@ public class RedisUtil {
     static {
         String redisModule = PropertiesAnalysisUtil.getInfoBykeyFromPro(RedisConstant.REDIS_MODULE.getValue());
         if (RedisConstant.STANDALONE.getValue().equals(redisModule)) {
-            getRedisStandalineEnv();
+            getRedisStandaloneEnv();
         } else if (RedisConstant.CLUSTER.getValue().equals(redisModule)) {
             getRedisClusterEnv();
         }
@@ -51,7 +51,7 @@ public class RedisUtil {
         clusterConnection = redisClusterClient.connect();
     }
 
-    private static void getRedisStandalineEnv() {
+    private static void getRedisStandaloneEnv() {
         RedisClient redisClient = RedisClient.create(RedisURI.create(
                 PropertiesAnalysisUtil
                         .getInfoBykeyFromPro(RedisConstant.REDIS_HOSTNAME_LIST.getValue()).split(",")[0],

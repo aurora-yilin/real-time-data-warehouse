@@ -65,7 +65,13 @@ public enum CommonConstant {
 
     //dimension
     //user.info.dimension
-    USER_INFO_DIMENSION("user.info.dimension");
+    USER_INFO_DIMENSION("user.info.dimension"),
+
+
+//    public static final String CLICKHOUSE_URL = "jdbc:clickhouse://hadoop102:8123/default";
+    CLICKHOUSE_URL("clickhouse.url"),
+//    public static final String CLICKHOUSE_DRIVER = "ru.yandex.clickhouse.ClickHouseDriver";
+    CLICKHOUSE_DRIVER("clickhouse.driver");
 
     private String value;
 

@@ -12,7 +12,13 @@ import java.util.Properties;
  * @Date 2021/6/27
  */
 public class GetResource {
+    private final static Properties PROPERTIES;
+
+    static {
+        PROPERTIES = PropertiesAnalysisUtil.getProperties("application.properties");
+    }
+
     public static Properties getApplicationPro(){
-        return PropertiesAnalysisUtil.getProperties("application.properties");
+        return PROPERTIES;
     }
 }

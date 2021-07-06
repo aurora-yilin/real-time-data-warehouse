@@ -1,6 +1,7 @@
 package aurora.yilin.realtime.app.dws;
 
 import aurora.yilin.realtime.bean.VisitorStats;
+import aurora.yilin.realtime.utils.ClickhouseUtil;
 import aurora.yilin.utils.KafkaUtil;
 import aurora.yilin.utils.TimeParseUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -163,7 +164,7 @@ public class VisitorStatsApp {
         });
 
         //TODO 7.写入ClickHouse
-        result.print(">>>>>>>>>>>");
+        result.addSink(ClickhouseUtil.clickHouseJdbcSink("insert into visitor_stats_210108 values(?,?,?,?,?,?,?,?,?,?,?,?)"));
 
         //TODO 8.启动
         env.execute();
