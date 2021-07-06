@@ -17,6 +17,19 @@ import java.util.List;
  */
 public class JdbcUtil {
 
+    /**
+     * 查询sql资源
+     * @param sql sql语句
+     * @param connection jdbcConnection
+     * @param clazz 用于封装查询结果的对象类
+     * @param transaction 是否开启下划线转小驼峰的映射
+     * @param <T> 封装查询结果对象的泛型
+     * @return
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     */
     public static<T> List<T> query(String sql, Connection connection, Class<T> clazz, Boolean transaction) throws SQLException, IllegalAccessException, InstantiationException, InvocationTargetException {
         ArrayList<T> resultList = new ArrayList<>();
 

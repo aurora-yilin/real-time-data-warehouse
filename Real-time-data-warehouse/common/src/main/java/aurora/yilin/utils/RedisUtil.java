@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @Description
+ * @Description redis链接的工具类
  * @Author yilin
  * @Version V1.0.0
  * @Since 1.0

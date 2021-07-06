@@ -29,10 +29,20 @@ public class PropertiesAnalysisUtil {
         }
     }
 
+    /**
+     * 获取本包中的资源
+     * @param key
+     * @return
+     */
     public static String getInfoBykeyFromPro(String key){
         return properties.getProperty(key);
     }
 
+    /**
+     * 调取公共资源的类
+     * @param fileName
+     * @return
+     */
     public static Properties getProperties(String fileName){
         Properties properties = null;
         try {
